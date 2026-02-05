@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precision 16th Converter</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
+        }
+        .app-container {
+            width: 90%; max-width: 380px; background: #1e1e1e; border: 1px solid #333;
+            border-radius: 15px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            border-top: 8px solid #D62828; /* Milwaukee Red */
+        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 1.1rem; letter-spacing: 1px; color: #D62828; margin: 0; text-transform: uppercase; }
+        
+        .display-screen {
+            background: #000; border-radius: 8px;
+            padding: 25px; text-align: center; margin-bottom: 20px;
+            border: 1px solid #444;
+        }
+        .label { font-size: 0.7rem; color: #888; text-transform: uppercase; margin-bottom: 8px; display: block; font-weight: bold; }
+        #output { font-size: 3rem; font-weight: 800; color: #fff; margin: 0; }
+        
+        .input-box { 
+            width: 100%; background: #333; border: 2px solid #444; padding: 15px; border-radius: 10px;
+            color: #fff; font-size: 1.8rem; text-align: center; box-sizing: border-box; outline: none;
+        }
+        .input-box:focus { border-color: #D62828; }
+        
+        .btn-clear { 
+            width: 100%; padding: 12px; margin-top: 15px; background: #333; 
+            color: #888; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+        }
+        .btn-clear:active { background: #444; }
+
+        /* AD SPACE BOX */
+        .ad-space {
+            margin-top: 25px; padding: 15px; border: 1px dashed #D62828; border-radius: 8px;
+            text-align: center; background: rgba(214, 40, 40, 0.05);
+        }
+        .ad-link { color: #D62828; text-decoration: none; font-size: 0.9rem; font-weight: bold; }
+        
+        .footer { text-align: center; margin-top: 15px; font-size: 0.6rem; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header"><h1>1/16" Shop Assistant</h1></div>
+    
+    <div class="display-screen">
+        <span class="label">Imperial Measure (1/16")</span>
+        <p id="output">0' 0"</p>
+    </div>
+
+    <span class="label">Enter Centimeters</span>
+    <input type="number" id="cmInput" class="input-box" placeholder="0.0" oninput="convert()" autofocus>
+
+    <button class="btn-clear" onclick="clearInput()">Reset</button>
+
+    <div class="ad-space">
+        <span class="label" style="margin-bottom:5px;">Sponsor</span>
+        <a href="#" class="ad-link">Your Milwaukee Tool Ad Here</a>
+    </div>
+    
+    <div class="footer">© 2026 PRECISION TOOLS | CHECK TWICE, CUT ONCE</div>
+</div>
+
+<script>
+    function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+
+    function convert() {
+        let cm = document.getElementById('cmInput').value;
+        let out = document.getElementById('output');
+        if (!cm || cm <= 0) { out.innerText = "0' 0\""; return; }
+
+        let totalInches = cm / 2.54;
+        let feet = Math.floor(totalInches / 12);
+        let inchesOnly = Math.floor(totalInches % 12);
+        
+        // ROUND TO NEAREST 1/16th
+        let sixteenths = Math.round((totalInches - Math.floor(totalInches)) * 16);
+
+        if (sixteenths === 16) { 
+            sixteenths = 0; 
+            inchesOnly++; 
+            if (inchesOnly === 12) { feet++; inchesOnly = 0; } 
+        }
+
+        let frac = "";
+        if (sixteenths > 0) {
+            let common = gcd(sixteenths, 16);
+            frac = ` ${sixteenths/common}/${16/common}`;
+        }
+        out.innerText = `${feet}' ${inchesOnly}${frac}"`;
+    }
+
+    function clearInput() {
+        document.getElementById('cmInput').value = '';
+        document.getElementById('output').innerText = "0' 0\"";
+        document.getElementById('cmInput').focus();
+    }
+</script>
+</body>
+</html>
